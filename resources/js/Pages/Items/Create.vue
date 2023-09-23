@@ -1,9 +1,9 @@
 <script setup>
-import AuthenticatedLayout from "@/Layouts/AuthenticatedLayout.vue";
-import { Head } from "@inertiajs/vue3";
-import { reactive } from "vue";
-import { Inertia } from "@inertiajs/inertia";
-import BreezeValidationErrors from "@/Components/ValidationErros.vue";
+import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
+import { Head } from '@inertiajs/vue3';
+import { reactive } from 'vue';
+import { Inertia } from '@inertiajs/inertia';
+import BreezeValidationErrors from '@/Components/ValidationErros.vue';
 
 defineProps({
     errors: Object,
@@ -16,7 +16,7 @@ const form = reactive({
 });
 
 const storeItem = () => {
-    Inertia.post("/items", form);
+    Inertia.post('/items', form);
 };
 </script>
 
@@ -25,9 +25,7 @@ const storeItem = () => {
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-                商品登録
-            </h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">商品登録</h2>
         </template>
 
         <div class="py-12">
@@ -41,10 +39,7 @@ const storeItem = () => {
                                     <div class="flex flex-wrap -m-2">
                                         <div class="p-2 w-full">
                                             <div class="relative">
-                                                <label
-                                                    for="name"
-                                                    class="leading-7 text-sm text-gray-600"
-                                                >
+                                                <label for="name" class="leading-7 text-sm text-gray-600">
                                                     商品名</label
                                                 >
                                                 <input
@@ -58,11 +53,7 @@ const storeItem = () => {
                                         </div>
                                         <div class="p-2 w-full">
                                             <div class="relative">
-                                                <label
-                                                    for="memo"
-                                                    class="leading-7 text-sm text-gray-600"
-                                                    >メモ</label
-                                                >
+                                                <label for="memo" class="leading-7 text-sm text-gray-600">メモ</label>
                                                 <textarea
                                                     id="memo"
                                                     name="memo"
@@ -73,11 +64,8 @@ const storeItem = () => {
                                         </div>
                                         <div class="p-2 w-full">
                                             <div class="relative">
-                                                <label
-                                                    for="price"
-                                                    class="leading-7 text-sm text-gray-600"
-                                                >
-                                                    商品名</label
+                                                <label for="price" class="leading-7 text-sm text-gray-600"
+                                                    >商品価格</label
                                                 >
                                                 <input
                                                     type="number"
