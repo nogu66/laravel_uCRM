@@ -1,71 +1,27 @@
 <script setup>
 import AuthenticatedLayout from '@/Layouts/AuthenticatedLayout.vue';
-import { Head } from '@inertiajs/vue3';
-import { computed, onMounted, reactive, ref } from 'vue';
+import { Head, Link } from '@inertiajs/vue3';
+import { onMounted } from 'vue';
 import { Inertia } from '@inertiajs/inertia';
-import BreezeValidationErrors from '@/Components/ValidationErros.vue';
-import { getToday } from '@/common';
-import MicroModal from '@/Components/MicroModal.vue';
+import dayjs from 'dayjs';
 
 const props = defineProps({
     items: Array,
+    order: Array,
 });
 
 onMounted(() => {
-    form.date = getToday();
-    props.items.forEach((item) => {
-        itemList.value.push({
-            id: item.id,
-            name: item.name,
-            price: item.price,
-            quantity: 0,
-        });
-    });
+    console.log(props.items);
+    console.log(props.order[0].customer_name);
 });
-
-const itemList = ref([]);
-
-const form = reactive({
-    date: null,
-    customer_id: null,
-    status: true,
-    items: [],
-});
-
-const totalPrice = computed(() => {
-    let total = 0;
-
-    itemList.value.forEach((item) => {
-        total += item.price * item.quantity;
-    });
-    return total;
-});
-
-const storePurchase = () => {
-    itemList.value.forEach((item) => {
-        if (item.quantity > 0) {
-            form.items.push({
-                id: item.id,
-                quantity: item.quantity,
-            });
-        }
-    });
-    Inertia.post(route('purchases.store'), form);
-};
-
-const quantity = ['0', '1', '2', '3', '4', '5', '6', '7', '8', '9']; // option用
-
-const setCustomerId = (id) => {
-    form.customer_id = id;
-};
 </script>
 
 <template>
-    <Head title="購入画面" />
+    <Head title="購買履歴　詳細画面" />
 
     <AuthenticatedLayout>
         <template #header>
-            <h2 class="font-semibold text-xl text-gray-800 leading-tight">購入画面</h2>
+            <h2 class="font-semibold text-xl text-gray-800 leading-tight">購買履歴　詳細画面</h2>
         </template>
 
         <div class="py-12">
@@ -80,13 +36,13 @@ const setCustomerId = (id) => {
                                         <div class="p-2 w-full">
                                             <div class="relative">
                                                 <label for="date" class="leading-7 text-sm text-gray-600"> 日付</label>
-                                                <input
-                                                    type="text"
+                                                <div
                                                     id="date"
                                                     name="date"
-                                                    v-model="form.date"
                                                     class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                                                />
+                                                >
+                                                    {{ dayjs(props.order[0].created_at).format('YYYY-MM-DD HH:mm:ss') }}
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="p-2 w-full">
@@ -94,22 +50,13 @@ const setCustomerId = (id) => {
                                                 <label for="customer" class="leading-7 text-sm text-gray-600">
                                                     会員名</label
                                                 >
-                                                <MicroModal @update:customerId="setCustomerId" />
-                                            </div>
-                                        </div>
-
-                                        <div class="p-2 w-full">
-                                            <div class="">
-                                                <label for="price" class="leading-7 text-sm text-gray-600">
-                                                    商品名</label
-                                                >
-                                                <input
-                                                    type="number"
-                                                    id="price"
-                                                    name="price"
-                                                    v-model="form.price"
+                                                <div
+                                                    id="date"
+                                                    name="date"
                                                     class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
-                                                />
+                                                >
+                                                    {{ props.order[0].customer_name }}
+                                                </div>
                                             </div>
                                         </div>
                                         <div class="w-full mt-8 mx-auto overflow-auto">
@@ -144,25 +91,21 @@ const setCustomerId = (id) => {
                                                     </tr>
                                                 </thead>
                                                 <tbody>
-                                                    <tr v-for="item in itemList" :key="item.id">
+                                                    <tr v-for="item in props.items" :key="item.id">
                                                         <td class="border-b-2 px-4 py-3">
-                                                            {{ item.id }}
+                                                            {{ item.item_id }}
                                                         </td>
                                                         <td class="border-b-2 px-4 py-3">
-                                                            {{ item.name }}
+                                                            {{ item.item_name }}
                                                         </td>
                                                         <td class="border-b-2 px-4 py-3">
-                                                            {{ item.price }}
+                                                            {{ item.item_price }}
                                                         </td>
                                                         <td class="border-b-2 px-4 py-3 text-lg text-gray-900">
-                                                            <select name="quantity" v-model="item.quantity">
-                                                                <option v-for="q in quantity" :value="q">
-                                                                    {{ q }}
-                                                                </option>
-                                                            </select>
+                                                            {{ item.quantity }}
                                                         </td>
                                                         <td class="border-b-2 px-4 py-3">
-                                                            {{ item.price * item.quantity }}
+                                                            {{ item.subtotal }}
                                                         </td>
                                                     </tr>
                                                 </tbody>
@@ -177,16 +120,50 @@ const setCustomerId = (id) => {
                                                 <div
                                                     class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
                                                 >
-                                                    {{ totalPrice }}円
+                                                    {{ props.order[0].total }}円
                                                 </div>
                                             </div>
                                         </div>
                                         <div class="p-2 w-full">
-                                            <button
+                                            <div class="">
+                                                <label for="price" class="leading-7 text-sm text-gray-600"
+                                                    >ステータス</label
+                                                >
+                                                <br />
+                                                <div
+                                                    v-if="props.order[0].status == true"
+                                                    class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                                >
+                                                    未キャンセル
+                                                </div>
+                                                <div
+                                                    v-if="props.order[0].status == false"
+                                                    class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                                >
+                                                    キャンセル済
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="p-2 w-full">
+                                            <div class="">
+                                                <label for="price" class="leading-7 text-sm text-gray-600"
+                                                    >キャンセル日</label
+                                                ><br />
+                                                <div
+                                                    v-if="props.order[0].status == false"
+                                                    class="w-full bg-gray-100 bg-opacity-50 rounded border border-gray-300 focus:border-indigo-500 focus:bg-white focus:ring-2 focus:ring-indigo-200 text-base outline-none text-gray-700 py-1 px-3 leading-8 transition-colors duration-200 ease-in-out"
+                                                >
+                                                    {{ dayjs(props.order[0].updated_at).format('YYYY/MM/DD') }}
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div v-if="props.order[0].status == true" class="p-2 w-full">
+                                            <Link
+                                                as="button"
+                                                :href="route('purchases.edit', { purchase: props.order[0].id })"
                                                 class="flex mx-auto text-white bg-indigo-500 border-0 py-2 px-8 focus:outline-none hover:bg-indigo-600 rounded text-lg"
+                                                >編集する</Link
                                             >
-                                                商品登録
-                                            </button>
                                         </div>
                                     </div>
                                 </div>
